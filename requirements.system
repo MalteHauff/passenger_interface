@@ -1,0 +1,11 @@
+portaudio19-dev
+libportaudio2
+alsa-base
+alsa-utils
+libasound2t64
+libasound2-plugins
+alsa-ucm-conf
+build-essential
+graphviz
+graphviz-dev
+pkg-config

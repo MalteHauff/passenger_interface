@@ -1,0 +1,49 @@
+command$truth
+Halt hier.$9. STOP_AND_PARK
+Mon ami est dans le bus. Tu peux repartir$19. RESUME_RIDE
+Drive to the nearest bakery. I haven't have lunch today.$21. SET_NEW_GOAL_POINT
+Big auf die Strasse lunks ab.$11. TURN_LEFT
+Fahr nicht so schnell.$6. DECREASE_VELOCITY
+Meine Ausgang ist der dritte im Kreisverkehr.$13. LEAVE_ROUNDABOUT_AT_EXIT_X
+Bleib auf dem selbe Streife.$2. EXECUTE_LANE_FOLLOWING
+Folge das Bus.$10. STAY_BEHIND_THE_VEHICLE_AHEAD
+Ich muss zurch nach Schule.$16. DRIVE_BACK_TO_START_POINT
+Mutti ist bei dieser Lampe. Stopp dort, sodass sie einsteigen kann.$7. STOP_AND_LET_SB_BOARD
+Go faster, we are late.$5. INCREASE_VELOCITY
+Meine Strasse ist rechts. $11. TURN_RIGHT
+Fahr auf dem rechte Streife.$4. EXECUTE_LANE_CHANGE_RIGHT
+Fahr zurck wenn m”glich, an die andere Richtung.$12. PERFORM_U_TURN
+Beschleunig nicht so schnell.$17. DRIVE_MORE_COMFORTABLY
+Stopp sofort! $1. EXECUTE_EMERGENCY_STOP
+Ich muss hier raus.$8. STOP_AND_LET_SB_EXIT
+Continue on this street.$14. CROSS_JUNCTION_STRAIGHT
+Fah auf dem linke Spur.$3. EXECUTE_LANE_CHANGE_LEFT
+Bleib nicht so nah vom anderen Verkehr.$20. KEEP_MORE_DISTANCE
+Accelere.$5. INCREASE_VELOCITY
+Fahre zu XYZ.$21. SET_NEW_GOAL_POINT
+Fahre gerade über die Kreuzung$14. CROSS_JUNCTION_STRAIGHT
+Nicht so schnell!$6. DECREASE_VELOCITY
+Halt kurz an, mein Freund möchte zusteigen.$7. STOP_AND_LET_SB_BOARD
+Halt an und parke.$9. STOP_AND_PARK
+Fahre zurück zum Startpunkt.$16. STOP_AND_LET_SB_BOARD
+Dreh um.$12. PERFORM_U_TURN
+Biege hier links ab.$15. TURN_LEFT
+Bieg nach rechts ab.$11. TURN_RIGHT
+Spurwechsel nach rechts!$4. EXECUTE_LANE_CHANGE_RIGHT
+Weiterfahren!$19. RESUME_RIDE
+Halte mehr Abstand.$20. KEEP_MORE_DISTANCE
+Nicht so sportlich!$17. DRIVE_MORE_COMFORTABLY
+Bleib hinter dem Auto.$10. STAY_BEHIND_THE_VEHICLE_AHEAD
+Fahr schneller!$5. INCREASE_VELOCITY
+Nothalt!$1. EXECUTE_EMERGENCY_STOP
+wechsel eine Spur nach links.$3. EXECUTE_LANE_CHANGE_LEFT
+Folge der Spur.$2. EXECUTE_LANE_FOLLOWING
+Lass mich aussteigen!$8. STOP_AND_LET_SB_EXIT
+Fahr sportlich.$18. DRIVE_MORE_SPORTILY
+Fahre an der zweiten Ausfahrt aus dem Kreisel.$13. LEAVE_ROUNDABOUT_AT_EXIT_X
+Fahr zurückzum Start.$16. DRIVE_BACK_TO_START_POINT
+Continue on the same street after the junction.$14. CROSS_JUNCTION_STRAIGHT
+Wie weit ist noch dem Ziel?$6700
+Wie schnell fahren wir gerade?$110.2
+Quelle est la vitesse actuelle?$110.2
+How far is the vehicle to the front?$23
