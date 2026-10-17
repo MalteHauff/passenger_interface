@@ -1,14 +1,39 @@
-"""Launch the complete FM voice-command interface."""
+"""Launch the complete passenger voice-command interface."""
 
 import os
 from pathlib import Path
+import sys
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
+from launch.actions import (
+    AppendEnvironmentVariable,
+    DeclareLaunchArgument,
+    SetEnvironmentVariable,
+)
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
+
+
+def find_cuda_library_directories():
+    """Return pip-installed cuBLAS and cuDNN directories for CUDA Whisper."""
+    search_paths = [Path(path) for path in sys.path if path]
+    virtual_env = os.environ.get("VIRTUAL_ENV")
+    if virtual_env:
+        search_paths.extend(
+            Path(virtual_env).glob("lib/python3*/site-packages")
+        )
+
+    directories = []
+    for library in ("cublas", "cudnn"):
+        for search_path in search_paths:
+            library_directory = search_path / "nvidia" / library / "lib"
+            if library_directory.is_dir():
+                directories.append(str(library_directory))
+                break
+
+    return directories
 
 
 def generate_launch_description():
@@ -35,14 +60,14 @@ def generate_launch_description():
 
     source_locations_file = (
         Path(__file__).resolve().parents[1]
-        / "fm_adore_interface"
+        / "passenger_interface"
         / "locations.json"
     )
     if source_locations_file.is_file():
         locations_file = source_locations_file
     else:
         package_share = Path(
-            get_package_share_directory("fm_adore_interface")
+            get_package_share_directory("passenger_interface")
         )
         locations_file = package_share / "locations.json"
 
@@ -92,8 +117,11 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "whisper_language",
-            default_value="",
-            description="Language code, or empty for automatic detection.",
+            default_value="de",
+            description=(
+                "Language code, or empty for automatic detection. "
+                "Automatic detection costs an extra encoder pass."
+            ),
         ),
         DeclareLaunchArgument(
             "whisper_hotwords",
@@ -124,8 +152,16 @@ def generate_launch_description():
         SetEnvironmentVariable("HF_HOME", str(hf_cache)),
         SetEnvironmentVariable("HF_HUB_DISABLE_XET", "1"),
         SetEnvironmentVariable("HF_HUB_DOWNLOAD_TIMEOUT", "120"),
+        *[
+            AppendEnvironmentVariable(
+                "LD_LIBRARY_PATH",
+                directory,
+                prepend=True,
+            )
+            for directory in find_cuda_library_directories()
+        ],
         Node(
-            package="fm_adore_interface",
+            package="passenger_interface",
             executable="speech_to_text",
             name="speech_to_text",
             namespace=namespace,
@@ -161,7 +197,7 @@ def generate_launch_description():
             }],
         ),
         Node(
-            package="fm_adore_interface",
+            package="passenger_interface",
             executable="text_to_command",
             name="text_to_command",
             namespace=namespace,
@@ -181,7 +217,7 @@ def generate_launch_description():
             }],
         ),
         Node(
-            package="fm_adore_interface",
+            package="passenger_interface",
             executable="command_dissemination",
             name="command_dissemination",
             namespace=namespace,

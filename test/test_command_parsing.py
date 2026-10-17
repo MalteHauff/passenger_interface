@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from fm_adore_interface.command_parsing import (
+from passenger_interface.command_parsing import (
     CANONICAL_COMMANDS,
     CommandAction,
     CommandInterpretation,

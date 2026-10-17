@@ -21,7 +21,7 @@ def generate_launch_description():
 
     topic_arg = DeclareLaunchArgument(
         "topic",
-        default_value="fm/speech_to_text",
+        default_value="passenger_interface/speech_to_text",
         description="Topic to publish std_msgs/String on."
     )
 
@@ -36,7 +36,7 @@ def generate_launch_description():
         default_value="xyz",
         description='Destination used for command 21 (drive to ...). Ignored otherwise.'
     )
-    package_name = "fm_adore_interface"
+    package_name = "passenger_interface"
     executable_name = "simulation_node"  
 
     node_one_shot = Node(

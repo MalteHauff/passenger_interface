@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 from pydantic import ValidationError
 
-from fm_adore_interface.text_to_command_workflow import TextToCommandWorkflow
+from passenger_interface.text_to_command_workflow import TextToCommandWorkflow
 
 
 class FakeOllamaClient:

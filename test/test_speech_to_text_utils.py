@@ -1,6 +1,6 @@
 import numpy
 
-from fm_adore_interface.speech_to_text_utils import (
+from passenger_interface.speech_to_text_utils import (
     calculate_blocksize,
     calculate_rms,
     is_meaningful_transcript,

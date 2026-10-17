@@ -166,12 +166,12 @@ class TextToCommandNode(Node):
 
         self.subscription = self.create_subscription(
             String,
-            'fm/speech_to_text',
+            'passenger_interface/speech_to_text',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
 
-        self.cmd_publisher = self.create_publisher(PassengerRequest, 'fm/passenger_request', 10)
+        self.cmd_publisher = self.create_publisher(PassengerRequest, 'passenger_interface/passenger_request', 10)
         
         # Parameters
         self.declare_parameter(

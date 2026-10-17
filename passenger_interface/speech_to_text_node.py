@@ -49,7 +49,7 @@ class SpeechToTextNode(Node):
     def __init__(self):
         super().__init__('speech_to_text')
         
-        self.publisher = self.create_publisher(String, 'fm/speech_to_text', 10)
+        self.publisher = self.create_publisher(String, 'passenger_interface/speech_to_text', 10)
         self.running = True
 
         self.declare_parameter("whisper_model_size", WHISPER_MODEL_SIZE)

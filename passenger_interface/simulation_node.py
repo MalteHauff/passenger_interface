@@ -78,10 +78,10 @@ class NumberToTextPublisher(Node):
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="number_to_text_publisher",
-        description="Publish a mapped command text (1..21) to fm/speech_to_text."
+        description="Publish a mapped command text (1..21) to passenger_interface/speech_to_text."
     )
     parser.add_argument("number", nargs="?", type=int, help="Command number (1..21)")
-    parser.add_argument("--topic", default="fm/speech_to_text", help="Output topic (std_msgs/String)")
+    parser.add_argument("--topic", default="passenger_interface/speech_to_text", help="Output topic (std_msgs/String)")
     parser.add_argument("--interactive", action="store_true", help="Read numbers in a loop from stdin")
     parser.add_argument("--exit", dest="exit_no", type=int, default=None, help="Exit number for command 13")
     parser.add_argument("--destination", type=str, default=None, help='Destination for command 21 (e.g. "home")')

@@ -4,7 +4,7 @@ import glob
 
 
 
-package_name = 'fm_adore_interface'
+package_name = 'passenger_interface'
 
 
 
@@ -39,14 +39,14 @@ setup(
     maintainer='vboxuser',
     maintainer_email='vboxuser@todo.todo',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='EPL-2.0',
     #tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'speech_to_text = fm_adore_interface.speech_to_text_node:main',
-            'text_to_command = fm_adore_interface.text_to_command_node:main',
-            'command_dissemination = fm_adore_interface.command_dissemination_node:main',
-            'simulation_node = fm_adore_interface.simulation_node:main', 
+            'speech_to_text = passenger_interface.speech_to_text_node:main',
+            'text_to_command = passenger_interface.text_to_command_node:main',
+            'command_dissemination = passenger_interface.command_dissemination_node:main',
+            'simulation_node = passenger_interface.simulation_node:main', 
         ],
     },
 )

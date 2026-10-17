@@ -41,7 +41,7 @@ def generate_launch_description():
             debug=False
         ),
         Node(
-                package="fm_adore_interface",
+                package="passenger_interface",
                 executable="speech_to_text",
                 name="speech_to_text",
                 namespace="ego_vehicle",
@@ -63,7 +63,7 @@ def generate_launch_description():
                 ]
             ),
             Node(
-                package="fm_adore_interface",
+                package="passenger_interface",
                 executable="text_to_command",
                 name="text_to_command",
                 namespace="ego_vehicle",
@@ -82,7 +82,7 @@ def generate_launch_description():
                 ]
             ),
             Node(
-                package="fm_adore_interface",
+                package="passenger_interface",
                 executable="command_dissemination",
                 name="command_dissemination",
                 namespace="ego_vehicle",

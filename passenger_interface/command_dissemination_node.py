@@ -51,7 +51,7 @@ class CommandDisseminationNode(Node):
         # Subscriber to the incoming passenger requests
         self.subscription = self.create_subscription(
             PassengerRequest,
-            'fm/passenger_request',
+            'passenger_interface/passenger_request',
             self.command_callback,
             10)
         self.feedback_subscription_emergency_stop = self.create_subscription(

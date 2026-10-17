@@ -1,6 +1,6 @@
-# FM–ADORe Interface
+# Passenger Interface
 
-`fm_adore_interface` connects spoken passenger requests to ADORe's ROS 2
+`passenger_interface` connects spoken passenger requests to ADORe's ROS 2
 interfaces. It records or simulates speech, transcribes it with Whisper,
 classifies it as a supported vehicle action, and translates the result into
 messages consumed by mission control and the decision maker.
@@ -18,8 +18,8 @@ The package supports two independent simulation switches:
 ```mermaid
 flowchart LR
     A[Microphone or keyboard] --> B[speech_to_text]
-    B -->|fm/speech_to_text<br/>std_msgs/String| C[text_to_command]
-    C -->|fm/passenger_request<br/>PassengerRequest| D[command_dissemination]
+    B -->|passenger_interface/speech_to_text<br/>std_msgs/String| C[text_to_command]
+    C -->|passenger_interface/passenger_request<br/>PassengerRequest| D[command_dissemination]
     D -->|mission/goal_request| E[Mission control]
     D -->|passenger_request| F[Decision maker]
     D -->|mission_command| F
@@ -41,7 +41,7 @@ flowchart LR
    forwarded to the decision maker.
 
 Named destinations are configured in
-[`fm_adore_interface/locations.json`](fm_adore_interface/locations.json):
+[`passenger_interface/locations.json`](passenger_interface/locations.json):
 
 ```json
 {
@@ -63,10 +63,10 @@ default launch namespace is `/ego_vehicle`.
 
 | Node | Direction | Topic | Type / purpose |
 | --- | --- | --- | --- |
-| `speech_to_text` | publish | `fm/speech_to_text` | `std_msgs/msg/String`; transcript |
-| `text_to_command` | subscribe | `fm/speech_to_text` | transcript |
-| `text_to_command` | publish | `fm/passenger_request` | `adore_ros2_msgs/msg/PassengerRequest` |
-| `command_dissemination` | subscribe | `fm/passenger_request` | interpreted passenger request |
+| `speech_to_text` | publish | `passenger_interface/speech_to_text` | `std_msgs/msg/String`; transcript |
+| `text_to_command` | subscribe | `passenger_interface/speech_to_text` | transcript |
+| `text_to_command` | publish | `passenger_interface/passenger_request` | `adore_ros2_msgs/msg/PassengerRequest` |
+| `command_dissemination` | subscribe | `passenger_interface/passenger_request` | interpreted passenger request |
 | `command_dissemination` | subscribe | `emergency_stop_started` | emergency-stop feedback |
 | `command_dissemination` | publish | `passenger_request` | requests handled by the decision maker |
 | `command_dissemination` | publish | `mission/goal_request` | `adore_ros2_msgs/msg/GoalPoint` |
@@ -162,12 +162,13 @@ PY
 ```
 
 GPU execution needs a visible NVIDIA GPU and compatible CUDA/cuDNN libraries.
-If the pip-installed libraries are not found, set their library paths before
-starting Python/ROS:
+The ADORe CLI container is started with `--gpus all`. `demoSimulation.py`
+prepends the pip-installed cuBLAS/cuDNN directories to `LD_LIBRARY_PATH`.
+When starting the speech node without that launch file, set them manually:
 
 ```bash
-FM_CUDA_LIBS=$(python3 -c 'import os, nvidia.cublas.lib, nvidia.cudnn.lib; print(os.path.dirname(nvidia.cublas.lib.__file__) + ":" + os.path.dirname(nvidia.cudnn.lib.__file__))')
-export LD_LIBRARY_PATH="$FM_CUDA_LIBS${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+CUDA_LIBS=$(python3 -c 'import nvidia.cublas, nvidia.cudnn; print(nvidia.cublas.__path__[0] + "/lib:" + nvidia.cudnn.__path__[0] + "/lib")')
+export LD_LIBRARY_PATH="$CUDA_LIBS${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ```
 
 See [Faster-Whisper's GPU requirements](https://github.com/SYSTRAN/faster-whisper#gpu)
@@ -228,18 +229,24 @@ a sourced ADORe CLI terminal:
 ros2 launch adore_scenarios/simulation_scenarios/dlr_campus.launch.py
 ```
 
-In another sourced terminal **at the repository root**, start all three FM
+In another sourced terminal **at the repository root**, start all three
 nodes using Mistral and the four-channel microphone / CUDA setup:
 
 ```bash
 ros2 launch \
-  ros2_workspace/src/adore_ros2_nodes/fm_adore_interface/launchfiles/demoSimulation.py \
+  ros2_workspace/src/adore_ros2_nodes/passenger_interface/launchfiles/demoSimulation.py \
   simulation:=False \
   model_name:=mistral-small:24b-instruct-2501-q8_0 \
   ollama_base_url:=http://localhost:11434 \
   whisper_model_size:=large-v3-turbo \
   whisper_device:=cuda whisper_compute_type:=float16 \
   audio_device:=4 audio_channels:=4 audio_channel:=3 audio_sample_rate:=48000
+```
+
+```bash
+ros2 launch \
+  ros2_workspace/src/adore_ros2_nodes/passenger_interface/launchfiles/demoSimulation.py \
+  audio_device:=8 audio_channels:=1 audio_channel:=0 audio_sample_rate:=16000
 ```
 
 Use `python3 -m sounddevice` to list audio-device indices. Pass `-1` as
@@ -252,26 +259,26 @@ terminals. The first command uses terminal input instead of opening Whisper or
 an audio device; the second command bypasses Ollama:
 
 ```bash
-ros2 run fm_adore_interface speech_to_text --ros-args \
+ros2 run passenger_interface speech_to_text --ros-args \
   -r __ns:=/ego_vehicle -p only_simulate:=true
 ```
 
 ```bash
-ros2 run fm_adore_interface text_to_command --ros-args \
+ros2 run passenger_interface text_to_command --ros-args \
   -r __ns:=/ego_vehicle -p simulation:=true
 ```
 
 ```bash
-ros2 run fm_adore_interface command_dissemination --ros-args \
+ros2 run passenger_interface command_dissemination --ros-args \
   -r __ns:=/ego_vehicle \
-  -p "location_table_path:=$(ros2 pkg prefix --share fm_adore_interface)/locations.json"
+  -p "location_table_path:=$(ros2 pkg prefix --share passenger_interface)/locations.json"
 ```
 
 Enter a command such as `drive to the airport` in the first terminal. You can
 also bypass the speech-to-text node and inject a transcript directly:
 
 ```bash
-ros2 topic pub --once /ego_vehicle/fm/speech_to_text \
+ros2 topic pub --once /ego_vehicle/passenger_interface/speech_to_text \
   std_msgs/msg/String "{data: 'drive to the airport'}"
 ```
 
@@ -279,11 +286,11 @@ The command generator can publish predefined test commands to the same topic:
 
 ```bash
 # One-shot destination command (command 21)
-ros2 launch fm_adore_interface simulation.launch.py \
+ros2 launch passenger_interface simulation.launch.py \
   interactive:=false number:=21 destination:=airport
 
 # Interactive command selection
-ros2 launch fm_adore_interface simulation.launch.py interactive:=true
+ros2 launch passenger_interface simulation.launch.py interactive:=true
 ```
 
 `simulation.launch.py` only generates transcript messages; the
@@ -296,7 +303,7 @@ use the individual keyboard-input node above for a test without audio.
 ### Inspect configuration and follow a request
 
 ```bash
-ros2 launch fm_adore_interface demoSimulation.py --show-args
+ros2 launch passenger_interface demoSimulation.py --show-args
 ros2 node list
 ros2 node info /ego_vehicle/speech_to_text
 ros2 param get /ego_vehicle/speech_to_text audio_device
@@ -307,11 +314,11 @@ ros2 topic list -t
 Run each echo in a separate terminal, then speak or publish a test transcript:
 
 ```bash
-ros2 topic echo /ego_vehicle/fm/speech_to_text
+ros2 topic echo /ego_vehicle/passenger_interface/speech_to_text
 ```
 
 ```bash
-ros2 topic echo /ego_vehicle/fm/passenger_request
+ros2 topic echo /ego_vehicle/passenger_interface/passenger_request
 ```
 
 ```bash
@@ -392,7 +399,7 @@ namespace. Values not listed here retain the node defaults shown above.
 | `whisper_model_size` | `large-v3-turbo` |
 | `whisper_device` | `cuda` |
 | `whisper_compute_type` | `float16` |
-| `whisper_language` | empty (automatic) |
+| `whisper_language` | `de` (pass `whisper_language:=` for automatic detection) |
 | `whisper_hotwords` | `lane, roundabout, U-turn, start point, Spurwechsel, Kreisverkehr` |
 | `audio_device` | `4` |
 | `audio_channels` | `4` |
